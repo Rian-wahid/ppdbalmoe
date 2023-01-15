@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <title>Formulir Pendaftaran</title>
+</head>
+<body class="bg-light">
+<div class="container px-4 mb-4 mt-4">
+<div class="card px-2">
+    <div class="card-body">
+        <h3 class="card-title text-center mb-5">Formulir Pendaftaran Peserta Didik Baru MTs MA dan Pondok Pesantren ALMUKARROM</h3>
+    
+   
+<form id="ppdb" action="" method="post">
+    <%  for(field in fields{ %>
+    <% if(field["input"]!="radio" && field["input"]!="textarea") {%>
+    <div class="mb-4">
+        <label for="<%=field["name"];%>" class="form-label"><%=field["label"];%></label>
+        <input type="<%=field["input"];%>" <%=(typeof field.pattern=="string")?"pattern=\""+field.pattern+"\"":""; %>autocomplete="off" <% if(field["min"] && field["max"]){%> minlength="<%=field["min"];%>" maxlength="<%=field["max"];%>" <% }%> required class="form-control" id="<%=field["name"];%>" name="<%=field["name"];%>" aria-describedby="<%=field["name"];%>_des">
+        <div id="<%= field["name"]%>_alert" class="form-text text-danger"></div>
+        <div id="<%=field["name"];%>_des" class="form-text"><%=field["description"];%></div>
+    </div>
+    <% }else if(field["input"]=="radio"){ %>
+        <div class="mb-4">
+            <label class="form-label"><%= field["label"];%></label>
+        <% for(let i = 0; i<field["enum"].length; i++){%>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" <%= (i==0)? "required":"";%> name="<%= field["name"];%>" id="<%= field["name"];%>_<%= field["enum_id"][i];%>" value="<%= field["enum"][i];%>">
+           
+            <label class="form-check-label" for="<%= field["name"];%>_<%= field["enum"][i];%>">
+               <%= field["enum"][i];%>
+            </label>
+        </div>
+        <% }%>
+        <div id="<%= field["name"];%>_alert" class="form-text text-danger"></div>
+        <div class="form-text"><%=field["description"];%></div>
+        </div>
+        <% }else{%>
+               <div class="mb-4">
+               <label class="form-label" for="<%= field["name"]; %>"><%= field["label"];%></label>
+               <textarea class="form-control" required form="ppdb" id="<%= field["name"]; %>" name="<%= field["name"]; %>" style="height: 100px"  <% if(field["min"]&& field["max"]){%> minlength="<%=field["min"];%>" maxlength="<%=field["max"];%>" <% }%>></textarea>
+               <div id="<%= field["name"]%>_alert" class="form-text text-danger"></div>
+               <div class="form-text"><%=field["description"];%></div>
+              
+               </div>
+            <% } %>
+   <% } %>
+
+   <button class="btn btn-primary mt-2" type="submit">Kirim</button>
+        </form>
+        </div>
+</div>
+</div>
+            <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pb-2 px-2">
+        <div class="modal-header">
+            
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           
+        </div>
+           
+            <div class="modal-body text-center">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel"></h1>
+            </div>
+        <div>
+       
+        <button type="button" class="btn mx-2 btn-primary" data-bs-dismiss="modal">Buat baru</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="modal fade" id="modal_error" aria-hidden="true" aria-labelledby="modal_error_label" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pt-3 pb-3 px-3">
+        <div class="modal-header">
+            
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+           
+        </div>
+           
+            <div class="modal-body text-center">
+                <h1 class="modal-title text-danger fs-5" id="modal_error_label">Maaf, terjadi kesalahan. Harap coba lagi nanti atau periksa kembali data-data yang anda kirimkan.</h1>
+            </div>
+      
+        </div>
+    </div>
+    </div>
+    
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script>
+        let modal = document.querySelector("#exampleModalToggle")
+        let modalError = document.querySelector("#modal_error") 
+        const modalTitle = document.querySelector(".modal-title")
+       
+        modal = new bootstrap.Modal(modal, {})
+       
+        modalError = new bootstrap.Modal(modalError, {})
+        
+        document.querySelector("#ppdb").addEventListener("submit",(e)=>{
+            e.preventDefault()
+            let data ={}
+            let formData = new FormData(e.target)
+            eval(`<% for(let  field in fields){%>
+                data["<%= field["name"];%>"] =  formData.get("<%= field["name"] %>")
+            <% }%>`)
+    
+            const json = JSON.stringify(data)
+            
+            fetch("/api/ppdb/",{
+                method:"POST",
+                headers:{
+                    "'Content-Type":"application/json",
+                    "Accept":"application/json",
+                    "Content-Length":json.length,
+                    "X-CSRF-TOKEN":"<%= csrf_token;%>"
+                },
+                body:json
+            }).then(response=>{
+                if(response.status<499){
+                    response.json().then(res=>{
+                        if(res.status!="success"){
+                            modalError.show()
+                        }
+                        if(res.status == "success"){
+                            modalTitle.innerText=res.message
+                            modal.show()
+                        }
+                    })
+                }
+            })
+        })
+    </script>
+</body>
+</html> 
