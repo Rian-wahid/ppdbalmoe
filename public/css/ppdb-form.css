@@ -1,0 +1,49 @@
+body{
+    background-color: #dadada;
+  }
+  noscript {
+    position:fixed;
+    z-index: 99;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    background-color: #55555555;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .ph-small::-webkit-input-placeholder{
+    font-size:0.8em;
+  }
+  .ph-small::-ms-input-placeholder{
+    font-size:0.8em;
+  }
+  .ph-small::-moz-input-placeholder{
+    font-size:0.8em;
+  }
+  .ph-small::placeholder{
+    font-size:0.8em;
+  }
+
+  @media  screen and (max-width:750px) {
+  .container-sm{
+    transform:scale(0.5) !important;
+  }
+  }
+  @media screen and (max-width:680px){
+    .col-3, .col-4, .col-5,.col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12{
+      width: 100%;
+    }
+    .col-1, .col-2, .col-3, .col-4, .col-5,.col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12{
+      margin-top:3px;
+    }
+    .col-2, .col-1{
+      width:50%;
+    }
+  
+  
+    .form-control{
+      padding:4px;
+    }
+  }

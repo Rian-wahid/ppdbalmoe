@@ -33,5 +33,6 @@ class StudentRepositoryMysql extends StudentRepository{
     async getDetail(studentId){
         const [rows] =await this.pool.execute(`SELECT d.*,s.nama_lengkap,s.pendaftaran,s.no_hp FROM student_details AS d 
         JOIN students AS s ON d.id = s.id WHERE d.id = ?`,[studentId])
+        return rows[0]
     }
 }

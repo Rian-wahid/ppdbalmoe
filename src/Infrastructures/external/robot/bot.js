@@ -31,7 +31,7 @@ ee.on("ready",()=>{
              } else{
                 clearInterval(intv);
             }
-        },500);
+        },200);
     },10000)
     
 })
@@ -40,7 +40,22 @@ client.on('qr', (qr) => {
     qrcode.generate(qr,{small:true});
 });
 
- 
+ client.on("message",(message)=>{
+    if(message.from.split("@")[0]==process.env.PHONE_FOR_ALERT){
+        if(message.body=="!ping"){
+            message.reply("pong")
+        }
+        if(message.body =="!ram"){
+            let total = 0;
+            let ram = process.memoryUsage()
+            for(const [k,v] of Object.entries(ram)){
+                total+=v
+            }
+            message.reply(`total penggunaan memori ${total/1000000}MB`)
+        }
+
+    }
+ })
 
 client.on('ready', () => {
         is_ready=true;
@@ -57,12 +72,13 @@ function send(data){
     ee.emit("send",data)
 }
 
-async function alert(message){
-    try{
-        await client.sendMessage(process.env.PHONE_FOR_ALERT,meessage);
-    }catch(e){
-
-    }
+function alert(message){
+    send({
+        phone:process.env.PHONE_FOR_ALERT,
+        base64:Buffer.from(message).toString("base64"),
+        mime:"text/plain",
+        filename:`error_${Date.now()}.txt`
+    })
 }
 function getQR(){
     return  new Promise((res)=>{
@@ -75,7 +91,7 @@ function getQR(){
                 res(qrtoken);
                 clearInterval(intv);
             }
-        },500)
+        },300)
     })
     
     
