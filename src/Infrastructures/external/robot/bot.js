@@ -29,11 +29,14 @@ const init=async ()=>{
                 if(data){
                     try{
                         let {phone,base64,mime,filename} = data;
-                        phone = phone.substring(1)+"@c.us";
+                        if(phone[0]=="+"){
+                            phone=phone.substring(1)
+                        }
+                        phone=phone+"@c.us"
                         const media = new MessageMedia(mime,base64,filename)
                         await client.sendMessage(phone,media)
                     }catch(e){
-                        throw e;
+                        throw e
                     }
                  } else{
                     clearInterval(intv);
@@ -47,7 +50,7 @@ const init=async ()=>{
         qrcode.generate(qr,{small:true});
     });
      client.on("message",(message)=>{
-        if(message.from.split("@")[0]==process.env.PHONE_FOR_ALERT){
+        if(message.from.split("@")[0]==process.env.PHONE_FOR_ALERT.substring(1)){
             if(message.body=="!ping"){
                 message.reply("pong")
             }
@@ -62,6 +65,7 @@ const init=async ()=>{
         }
      })
     client.on('ready', () => {
+            console.info("ready")
             is_ready=true;
             ee.emit("ready");
     });

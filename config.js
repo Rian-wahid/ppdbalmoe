@@ -1,0 +1,5 @@
+const dotenv = require("dotenv")
+const path = require("path")
+dotenv.config()
+process.env.VIEW_PATH=path.join(__dirname,process.env.VIEW_PATH)
+process.env.PUBLIC_PATH=path.join(__dirname,process.env.PUBLIC_PATH)

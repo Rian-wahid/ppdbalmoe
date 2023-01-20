@@ -14,7 +14,7 @@ const init = async ()=>{
 
     
     await conn.query(`
-DROP TABLE IF EXISTS bot_session;
+
 DROP TABLE IF EXISTS \`jwt_tokens\`;
 DROP TABLE IF EXISTS \`students\`;
 DROP TABLE IF EXISTS \`admins\`;
@@ -41,9 +41,6 @@ CREATE TABLE \`admins\` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE bot_session (
-  session text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE \`jwt_tokens\` (
   \`token\` text NOT NULL
