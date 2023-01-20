@@ -10,6 +10,7 @@ class StudentUseCase{
     }
 
     async addStudent(student,csrf_token){
+        console.info(csrf_token)
         await this._csrfTokenManager.verify(csrf_token)
         const http = new HTTPResponse ()
         student = new NewStudent(student)

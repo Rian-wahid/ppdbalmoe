@@ -8,12 +8,12 @@ class CsrfTokenManager {
         const payload={
             random:crypto.randomBytes(16).toString("hex")
         }
-        return this._jwt.generate(payload,process.env.CSRF_TOKEN_KEY)
+        return this._jwt.sign(payload,process.env.CSRF_TOKEN_KEY)
     }
     async verify(token){
         try{
-            const artifact = this._jwt.decode(token)
-            this._jwt.verify(artifact,process.env.CSRF_TOKEN_KEY)
+           
+            this._jwt.verify(token,process.env.CSRF_TOKEN_KEY)
         }catch(e){
             throw ClientError.bad()
         }

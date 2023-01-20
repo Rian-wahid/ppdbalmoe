@@ -1,7 +1,7 @@
 const BotSessionRepository  = require("../../Domains/bot_session/BotSessionRepository")
-
+const pool = require("../database/mysql/pool")
 class BotSessionRepositoryMysql extends BotSessionRepository{
-    constructor(pool){
+    constructor(){
         super()
         this.pool = pool
     }
