@@ -6,9 +6,7 @@ class HTMLToPDF{
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
             displayHeaderFooter:true
         }
-
     }
-
     generate(html){
         return new Promise((res,rej)=>{
             this.htmlPdfNode.generatePdf({content:html},this.options,(err,buff)=>{
@@ -21,5 +19,4 @@ class HTMLToPDF{
         })
     }
 }
-
 module.exports = HTMLToPDF

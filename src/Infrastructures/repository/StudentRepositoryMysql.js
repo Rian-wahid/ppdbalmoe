@@ -36,3 +36,4 @@ class StudentRepositoryMysql extends StudentRepository{
         return rows[0]
     }
 }
+module.exports = StudentRepositoryMysql

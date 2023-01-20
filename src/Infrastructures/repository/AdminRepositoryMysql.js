@@ -5,7 +5,6 @@ class AdminRepositoryMysql extends AdminRepository{
         super()
         this.pool=pool
     }
-
     async auth({username,password}){
         const [rows] = await this.pool.execute("SELECT nama,id FROM admins WHERE username_hash = ? AND password_hash = ?",[username,password])
         return rows[0]

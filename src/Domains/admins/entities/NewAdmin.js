@@ -6,13 +6,11 @@ class NewAdmin {
     constructor(credential){
         this.validate(credential)
         const {username,password,nama} = credential
-        
         return {
             username:crypto.createHash(algo).update(username).digest(encoding),
             password:crypto.createHash(algo).update(password).digest(encoding),
             nama
         }
-
     }
     validate({username,password,nama}){
         if(typeof username!="string" || typeof password!="string" || typeof nama!="string"){

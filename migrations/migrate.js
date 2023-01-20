@@ -1,33 +1,22 @@
-const mysql2 = require("mysql2/promise")
 const dotenv = require("dotenv")
+dotenv.config()
+
+const conn = require("../src/Infrastructures/database/mysql/pool.js");
+
 const {nanoid} = require("nanoid")
 const crypto=require("crypto")
 
-dotenv.config()
 
 const init = async ()=>{
-    const conn =await mysql2.createPool({
-        host:process.env.DB_HOST,
-        port:process.env.DB_PORT,
-        user:process.env.DB_USER,
-        password:process.env.DB_PASS,
-        database:process.env.DB_NAME,
-        multipleStatements:true,
-        waitForConnections:true,
-        connectionLimit:5,
-        queueLimit:0
-      
-        
-    })
+
    
     try{
 
     
     await conn.query(`
-DROP TABLE IF EXISTS \`bot_auth\`;
+DROP TABLE IF EXISTS bot_session;
 DROP TABLE IF EXISTS \`jwt_tokens\`;
 DROP TABLE IF EXISTS \`students\`;
-DROP TABLE IF EXISTS \`student_details\`;
 DROP TABLE IF EXISTS \`admins\`;
 `);
 
@@ -52,11 +41,9 @@ CREATE TABLE \`admins\` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-CREATE TABLE \`bot_session\` (
-  \`session\` text NOT NULL
+CREATE TABLE bot_session (
+  session text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
 
 CREATE TABLE \`jwt_tokens\` (
   \`token\` text NOT NULL
@@ -69,15 +56,12 @@ CREATE TABLE \`students\` (
   \`nama_lengkap\` text NOT NULL,
   \`no_hp\` text NOT NULL,
   \`pendaftaran\` text NOT NULL,
-  \`tanggal\` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-CREATE TABLE \`student_details\` (
-  \`id\` varchar(50) NOT NULL,
+  \`tanggal\` bigint NOT NULL,
   \`alamat\` text NOT NULL,
   \`ttl\` text NOT NULL,
-  \`usia\` text NOT NULL,
+  tempat_tinggal text NOT NULL,
+  alamat_tempat_tinggal text NOT NULL,
+  penghasilan text NOT NULL,
   \`transportasi\` text NOT NULL,
   \`anak_ke\` text NOT NULL,
   \`jenis_kelamin\` text NOT NULL,
@@ -87,11 +71,11 @@ CREATE TABLE \`student_details\` (
   \`pekerjaan_ibu\` text NOT NULL,
   \`keterangan_ayah\` text NOT NULL,
   \`keterangan_ibu\` text NOT NULL,
-  \`no_hp_wali\` text NOT NULL,
   \`nama_sekolah_asal\` text NOT NULL,
   \`alamat_sekolah_asal\` text NOT NULL,
   \`no_telp_sekolah_asal\` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 
 ALTER TABLE \`admins\`
@@ -102,9 +86,7 @@ ALTER TABLE \`students\`
   ADD PRIMARY KEY (\`id\`);
 
 
-ALTER TABLE \`student_details\`
-  ADD PRIMARY KEY (\`id\`);
-COMMIT;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
@@ -116,7 +98,7 @@ const encoding = process.env.ADMIN_HASH_ENCODING
 const username = crypto.createHash(algo).update(process.env.DEFAULT_ADMIN_USERNAME).digest(encoding)
 const password = crypto.createHash(algo).update(process.env.DEFAULT_ADMIN_PASSWORD).digest(encoding)
 const name = process.env.DEFAULT_ADMIN_NAME
-await conn.query(`INSERT INTO admins (id,nama,username_hash,password_hash)
+await conn.execute(`INSERT INTO admins (id,nama,username_hash,password_hash)
 VALUES (?,?,?,?)`,[`admin-${nanoid()}`,name,username,password])
 
 console.info("migrasi berhasil")

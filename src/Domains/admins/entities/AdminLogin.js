@@ -11,12 +11,10 @@ class AdminLogin{
             password:crypto.createHash(algo).update(password).digest(encoding)
         }
     }
-
     validate({username,password}){
         if(typeof  username!="string" || typeof password!="string"){
             throw ClientError.bad()
         }
     }
 }
-
 module.exports=AdminLogin

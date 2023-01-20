@@ -19,10 +19,9 @@ if(!global._poolWrapper_pool){
     })
 }
 class PoolWrapper{
-    construuctor(){
+    constructor(){
         this.pool=global._poolWrapper_pool;
     }
-
     query(...args){
         return new Promise((res,rej)=>{
             this.pool.query(...args,(err,...result)=>{
@@ -45,6 +44,16 @@ class PoolWrapper{
             })
         })
     }
+    end(){
+        return new Promise((res,rej)=>{
+            this.pool.end((err)=>{
+                if(err){
+                    rej(err)
+                    return;
+                }
+                res(null)
+            })
+        })
+    }
 }
-
 module.exports = new PoolWrapper();
