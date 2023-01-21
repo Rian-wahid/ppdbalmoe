@@ -12,20 +12,20 @@
     })
     ttl_tanggal_date.addEventListener("change",()=>{
      const date = new Date(ttl_tanggal_date.value);
-     let day = date.getDate()
+     let day = date.getDate();
      day = (day<10)?"0"+day:day;
-     let month = date.getMonth()+1
-     month=(month<10)?"0"+month:month
-     let year = date.getFullYear()
-     ttl_tanggal_text.value = `${day}-${month}-${year}`
+     let month = date.getMonth()+1;
+     month=(month<10)?"0"+month:month;
+     let year = date.getFullYear();
+     ttl_tanggal_text.value = `${day}-${month}-${year}`;
 
     })
      })();
 
      (()=>{
         document.getElementById("ppdb").addEventListener("submit",(e)=>{
-            e.preventDefault()
-            const form = new FormData(e.target)
+            e.preventDefault();
+            const form = new FormData(e.target);
             
             const data ={
                 pendaftaran:form.get("pendaftaran"),
@@ -80,15 +80,16 @@
 
             }
            
-            const json =    JSON.stringify(data)
-            const csrf_header = document.querySelector("meta[name=\"csrf_header\"]").content
-            const csrf_token = document.querySelector("meta[name=\"csrf_token\"]").content
+            const json =    JSON.stringify(data);
+            const csrf_header = document.querySelector("meta[name=\"csrf_header\"]").content;
+            const csrf_token = document.querySelector("meta[name=\"csrf_token\"]").content;
             const headers={
                 "Content-Type":"application/json",
                 "Content-Length":json.length,
+                "Accept":"application/json"
                 
             }
-            headers[csrf_header] = csrf_token
+            headers[csrf_header] = csrf_token;
             fetch("/api/ppdb",{
                 method:"POST",
                 headers,
@@ -98,7 +99,7 @@
                 res.json().then(resJson=>{
                     console.info(resJson)
                 })
-            })
+            });
         })
-     })()
+     })();
     

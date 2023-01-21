@@ -1,6 +1,6 @@
 const qrcode = require('qrcode-terminal');
 const Events = require("events");
-
+const fs = require("fs")
 const ee =new Events.EventEmitter();
 let qrtoken="";
 let  is_ready=false;
@@ -12,7 +12,9 @@ const init=async ()=>{
     ee.on("send",(data)=>{
         queue.push(data);
     });
-    
+    if(!fs.existsSync(__dirname+"/auth")){
+        fs.mkdirSync(__dirname+"/auth")
+    }
 
     const client= new Client({
         authStrategy:new LocalAuth({
@@ -23,7 +25,7 @@ const init=async ()=>{
         }
     });
     ee.on("ready",()=>{
-        setInterval(()=>{
+       const interv= setInterval(()=>{
             const intv = setInterval(async ()=>{
                 const data = queue.shift();
                 if(data){
@@ -42,6 +44,9 @@ const init=async ()=>{
                     clearInterval(intv);
                 }
             },200);
+            if(!is_ready){
+                clearInterval(interv)
+            }
         },10000)
     })
    
@@ -63,6 +68,10 @@ const init=async ()=>{
                 message.reply(`total penggunaan memori ${total/1000000}MB`)
             }
         }
+     })
+
+     client.on("disconnected",()=>{
+        is_ready=false
      })
     client.on('ready', () => {
             console.info("ready")

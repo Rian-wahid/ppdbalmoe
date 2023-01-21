@@ -50,7 +50,7 @@ describe("a new student entity",()=>{
             no_telp_sekolah_asal:"62663773",
         }
         const result = new NewStudent(data)
-        expect(typeof result.id).toBe("string")
+        
         expect(typeof result.tanggal).toBe("number")
         expect(typeof result.alamat).toBe("string")
         expect(typeof result.ttl).toBe("string")
@@ -58,7 +58,6 @@ describe("a new student entity",()=>{
         expect(typeof result.alamat_tempat_tinggal).toBe("string")
         expect(typeof result.keterangan_ayah).toBe("string")
         expect(typeof result.keterangan_ibu).toBe("string")
-        delete result.id
         delete result.tanggal
         delete result.ttl
         delete data.ttl
@@ -147,5 +146,7 @@ describe("a new student entity",()=>{
             _data[key]=1
             expect(()=>{new NewStudent(_data)}).toThrowError("Bad Request")
         }
+        data.no_hp="6282782738278"
+        expect(()=>{new NewStudent(data)}).toThrowError("Bad Request")
     })
 })

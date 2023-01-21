@@ -1,5 +1,5 @@
 const ClientError = require("../../../Commons/exceptions/ClientError")
-const {nanoid} = require("nanoid")
+
 const TC = require("../../../Commons/util/TypeCheck")
 class NewStudent{
     constructor(student){
@@ -27,14 +27,13 @@ class NewStudent{
             no_telp_sekolah_asal,
         }=student
         ttl = `${ttl.tempat}, ${ttl.tanggal}`
-        keterangan_ayah = `${keterangan_ayah.info} ${keterangan_ayah.tahun}`
-        keterangan_ibu = `${keterangan_ibu.info} ${keterangan_ibu.tahun}`
-        alamat_tempat_tinggal =`${(alamat_tempat_tinggal.jl!="")?"Jl. "+alamat_tempat_tinggal.jl+" ":""}RT ${alamat_tempat_tinggal.rt} RW ${alamat_tempat_tinggal.rw} Dsn. ${alamat_tempat_tinggal.dsn} ds. ${alamat_tempat_tinggal.ds} kec. ${alamat_tempat_tinggal.kec} kab. ${alamat_tempat_tinggal.kab}`
+        keterangan_ayah = (keterangan_ayah.tahun.length>0)?`${keterangan_ayah.info} ${keterangan_ayah.tahun}`:keterangan_ayah.info;
+        keterangan_ibu = (keterangan_ibu.tahun.length>0)?`${keterangan_ibu.info} ${keterangan_ibu.tahun}`:keterangan_ibu.info;
+        alamat_tempat_tinggal =`${(alamat_tempat_tinggal.jl!="")?"Jl. "+alamat_tempat_tinggal.jl+" ":""}, RT ${alamat_tempat_tinggal.rt} RW ${alamat_tempat_tinggal.rw}, Dsn. ${alamat_tempat_tinggal.dsn}, DS. ${alamat_tempat_tinggal.ds}, KEC. ${alamat_tempat_tinggal.kec}, KAB. ${alamat_tempat_tinggal.kab}`
         anak_ke = `${anak_ke.urutan} dari ${anak_ke.dari}`
-        alamat =`${(alamat.jl!="")?"Jl. "+alamat.jl+" ":""}RT ${alamat.rt} RW ${alamat.rw} Dsn. ${alamat.dsn} ds. ${alamat.ds} kec. ${alamat.kec} kab. ${alamat.kab}`
+        alamat =`${(alamat.jl!="")?"Jl. "+alamat.jl+" ":""}, RT ${alamat.rt} RW ${alamat.rw}, Dsn. ${alamat.dsn}, DS. ${alamat.ds} KEC. ${alamat.kec}, KAB. ${alamat.kab}`
         return {
             tanggal:Date.now(),
-            id:`student-${nanoid(8)}${Date.now()}`,
             pendaftaran,
             nama_lengkap,
             jenis_kelamin,
