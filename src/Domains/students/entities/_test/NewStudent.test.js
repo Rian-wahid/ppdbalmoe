@@ -1,3 +1,4 @@
+"use strict";
 const NewStudent = require("../NewStudent")
 describe("a new student entity",()=>{
     it("should not error",()=>{
@@ -13,6 +14,7 @@ describe("a new student entity",()=>{
                 jl:"",
                 rt:"3",
                 rw:"3",
+                dsn:"banaran",
                 ds:"sragi",
                 kec:"sukorejo",
                 kab:"ponorogo"
@@ -32,17 +34,18 @@ describe("a new student entity",()=>{
                 jl:"",
                 rt:"3",
                 rw:"3",
+                dsn:"banaran",
                 ds:"sragi",
                 kec:"sukorejo",
                 kab:"ponorogo"
             },
             penghasilan:"xxx Juta",
             keterangan_ayah:{
-                info:"masih hidup",
+                info:"1",
                 tahun:""
             },
             keterangan_ibu:{
-                info:"masih hidup",
+                info:"1",
                 tahun:""
             },
             nama_sekolah_asal:"nama sekolah",
@@ -51,7 +54,7 @@ describe("a new student entity",()=>{
         }
         const result = new NewStudent(data)
         
-        expect(typeof result.tanggal).toBe("number")
+        expect(result.tanggal).toBe(new Intl.DateTimeFormat(["id"]).format(new Date()))
         expect(typeof result.alamat).toBe("string")
         expect(typeof result.ttl).toBe("string")
         expect(typeof result.anak_ke).toBe("string")
@@ -86,6 +89,7 @@ describe("a new student entity",()=>{
                 jl:"",
                 rt:"3",
                 rw:"3",
+                dsn:"banaran",
                 ds:"sragi",
                 kec:"sukorejo",
                 kab:"ponorogo"
@@ -111,11 +115,11 @@ describe("a new student entity",()=>{
             },
             penghasilan:"xxx Juta",
             keterangan_ayah:{
-                info:"masih hidup",
+                info:"1",
                 tahun:""
             },
             keterangan_ibu:{
-                info:"masih hidup",
+                info:"1",
                 tahun:""
             },
             nama_sekolah_asal:"nama sekolah",

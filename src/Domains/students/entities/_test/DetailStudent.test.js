@@ -1,3 +1,4 @@
+"use strict";
 const DetailStudent = require("../DetailStudent")
 describe("a detail student entity",()=>{
     it("shoud not error",()=>{

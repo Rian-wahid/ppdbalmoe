@@ -4,7 +4,8 @@ class HTMLToPDF{
         this.options = { 
             format: 'A4', 
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            displayHeaderFooter:true
+            displayHeaderFooter:true,
+            printBackground:true
         }
     }
     generate(html){

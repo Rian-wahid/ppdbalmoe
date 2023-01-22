@@ -3,7 +3,7 @@ class StudentsTableHelper {
         this._pool = pool
     }
    async add({id="xxxxx",
-        tanggal=Date.now(),
+        tanggal=new Intl.DateTimeFormat(["id"]).format(new Date()),
         pendaftaran="MA",
         nama_lengkap="Nama Lengkap",
         jenis_kelamin="laki-laki",

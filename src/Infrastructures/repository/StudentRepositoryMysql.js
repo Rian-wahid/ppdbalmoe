@@ -32,13 +32,16 @@ class StudentRepositoryMysql extends StudentRepository{
         alamat_sekolah_asal,
         no_telp_sekolah_asal,
 
-    }){
+    },cb=()=>{}){
         let values = [tanggal,pendaftaran,nama_lengkap,jenis_kelamin,ttl,alamat, anak_ke,tempat_tinggal,transportasi,no_hp,nama_lengkap_ayah, nama_lengkap_ibu,pekerjaan_ayah,pekerjaan_ibu, alamat_tempat_tinggal,penghasilan,keterangan_ayah,keterangan_ibu,nama_sekolah_asal,alamat_sekolah_asal,no_telp_sekolah_asal,]
         values = values.map(value=>{
+            if(typeof value!="string"){
+                return value
+            }
             return this._xssFilter(value)
         })
-        const [[old]] = await this._pool.execute(`SELECT id  FROM students WHERE 
-        tanggal = ? AND
+        const [,...checkvalues] = values
+        const [[old]] = await this._pool.execute(`SELECT id  FROM students WHERE
         pendaftaran = ? AND
         nama_lengkap = ? AND
         jenis_kelamin = ? AND
@@ -58,12 +61,12 @@ class StudentRepositoryMysql extends StudentRepository{
         keterangan_ibu = ? AND
         nama_sekolah_asal = ? AND
         alamat_sekolah_asal = ? AND
-        no_telp_sekolah_asal = ?;`,values) 
+        no_telp_sekolah_asal = ?;`,checkvalues) 
         if(old){
             return old.id
         }
 
-        const id = `${this._idGenerator()}`;
+        const id = `student-${this._idGenerator(8)}${Date.now()}`;
         values.push(id)
         const q = Array(values.length).fill("?").join(",")
         await this._pool.execute(`INSERT INTO students 
@@ -89,6 +92,7 @@ class StudentRepositoryMysql extends StudentRepository{
             alamat_sekolah_asal,
             no_telp_sekolah_asal,
             id) VALUES (${q});`,values)
+        cb()
         return id
     }
     async getList(offset=0){

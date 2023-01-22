@@ -1,14 +1,23 @@
+
 (()=>{
     const ttl_tanggal_text = document.getElementById("ttl_tanggal_text");
     const ttl_tanggal_date = document.getElementById("ttl_tanggal_date");
+    
     ttl_tanggal_text.addEventListener("focus",()=>{
-     ttl_tanggal_date.showPicker();
+    try{
+        ttl_tanggal_date.showPicker();
+    }catch(e){}
+     
     })
     ttl_tanggal_text.addEventListener("click",()=>{
-     ttl_tanggal_date.showPicker();
+        try{
+            ttl_tanggal_date.showPicker();
+        }catch(e){}
     })
     ttl_tanggal_text.addEventListener("keydown",()=>{
-     ttl_tanggal_date.showPicker();
+        try{
+            ttl_tanggal_date.showPicker();
+        }catch(e){}
     })
     ttl_tanggal_date.addEventListener("change",()=>{
      const date = new Date(ttl_tanggal_date.value);
@@ -20,11 +29,35 @@
      ttl_tanggal_text.value = `${day}-${month}-${year}`;
 
     })
+    document.getElementById("keterangan_ayah").addEventListener("change",(e)=>{
+        if(e.target.value==="0"){
+            document.getElementById("ket_ayah_thn").required = true
+
+        }else{
+            document.getElementById("ket_ayah_thn").required = false
+        }
+    })
+    document.getElementById("keterangan_ibu").addEventListener("change",(e)=>{
+        if(e.target.value==="0"){
+            document.getElementById("ket_ibu_thn").required = true
+            
+        }else{
+            document.getElementById("ket_ibu_thn").required = false
+        }
+    })
      })();
 
      (()=>{
+        let modalSuccess = document.getElementById("modal_success")
+        let modalFail = document.getElementById("modal_fail")
+        let modalLoading = document.getElementById("modal_loading")
+        let modalFailInfo = document.getElementById("modal_fail_info")
+        modalSuccess=new bootstrap.Modal(modalSuccess,{})
+        modalFail=new bootstrap.Modal(modalFail,{})
+        modalLoading=new bootstrap.Modal(modalLoading,{})
         document.getElementById("ppdb").addEventListener("submit",(e)=>{
             e.preventDefault();
+            modalLoading.show()
             const form = new FormData(e.target);
             
             const data ={
@@ -36,7 +69,7 @@
                     tanggal:form.get("ttl_tanggal")
                 },
                 alamat:{
-                    jl:form.get("alamat_jl"),
+                    jl:form.get("alamat_jl")||"",
                     rt:form.get("alamat_rt"),
                     rw:form.get("alamat_rw"),
                     dsn:form.get("alamat_dsn"),
@@ -56,7 +89,7 @@
                 pekerjaan_ayah:form.get("pekerjaan_ayah"),
                 pekerjaan_ibu:form.get("pekerjaan_ibu"),
                 alamat_tempat_tinggal:{
-                    jl:form.get("alamat_ortu_jl"),
+                    jl:form.get("alamat_ortu_jl")||"",
                     rt:form.get("alamat_ortu_rt"),
                     rw:form.get("alamat_ortu_rw"),
                     dsn:form.get("alamat_ortu_dsn"),
@@ -68,16 +101,23 @@
                 penghasilan:form.get("penghasilan"),
                 keterangan_ayah:{
                     info:form.get("keterangan_ayah_text"),
-                    tahun:form.get("keterangan_ayah_tahun"),
+                    tahun:form.get("keterangan_ayah_tahun")||"",
                 },
                 keterangan_ibu:{
                     info:form.get("keterangan_ibu_text"),
-                    tahun:form.get("keterangan_ibu_tahun"),
+                    tahun:form.get("keterangan_ibu_tahun")||"",
                 },
                 nama_sekolah_asal:form.get("nama_sekolah_asal"),
                 alamat_sekolah_asal:form.get("alamat_sekolah_asal"),
                 no_telp_sekolah_asal:form.get("no_telp_sekolah_asal")
 
+            }
+            if(data.no_hp[0]!="+"){
+                if(data.no_hp[0]=="0"){
+                    data.no_hp="+62"+data.no_hp.substring(1)
+                }else{
+                    data.no_hp="+"+data.no_hp
+                }
             }
            
             const json =    JSON.stringify(data);
@@ -95,9 +135,18 @@
                 headers,
                 body:json
             }).then(res=>{
-                console.info(res.status)
+                
                 res.json().then(resJson=>{
-                    console.info(resJson)
+                    modalLoading.hide()
+                    setTimeout(()=>{
+                        if(resJson.status !="success"){
+                            modalFailInfo.innerText=resJson.message || ""
+                            modalFail.show()
+                        }else{
+                            modalSuccess.show()
+                        }
+                    },1000)
+                   
                 })
             });
         })

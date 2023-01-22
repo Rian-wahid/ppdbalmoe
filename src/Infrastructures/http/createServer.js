@@ -2,19 +2,40 @@ const express=require("express");
 const ClientError=require("../../Commons/exceptions/ClientError");
 const InternalError =require("../../Commons/exceptions/InternalError");
 const httpServer = express();
-//const bot = require("../external/robot/wrapper")
+const bot = require("../external/robot/wrapper")
 const student =require("../../Interfaces/http/api/student")
 const registration = require("../../Interfaces/http/web/registration")
 
 function createServer(container){
     httpServer.use(express.json());
     httpServer.use(express.static(process.env.PUBLIC_PATH))
-    student(httpServer,container)
-    registration(httpServer,container)
+    const asyncWraper=(cba)=>{
+        return async (req,res,next)=>{
+            try{
+               await cba(req,res,next);
+            }catch(err){
+                if(!(err instanceof ClientError)){
+                    const msg = req.path + "\n\n"+req.method+"\n\n"+err.stack
+                    bot.alert(msg)
+                }
+                if(err instanceof ClientError || err instanceof InternalError){
+                    res.status(err.response.status_code);
+                    res.json(err.response.body);
+                    return;
+                }
+                const {response}  = new InternalError();
+                res.status(response.status_code);
+                res.json(response.body);
+            }
+        }
+    }
+    const toInject={httpServer,container,asyncWraper}
+    student(toInject)
+    registration(toInject)
     httpServer.use((err,req,res,next)=>{
         if(!(err instanceof ClientError)){
             const msg = req.path + "\n\n"+req.method+"\n\n"+err.stack
-           // bot.alert(msg)
+            bot.alert(msg)
         }
         if(err instanceof ClientError || err instanceof InternalError){
             res.status(err.response.status_code);

@@ -1,15 +1,18 @@
-
+"use strict";
 const ListStudent = require("../ListStudent")
 describe("a list student entity",()=>{
     it("should be not error",()=>{
         const data = [{
             id:"xxxxx",
             nama_lengkap:"nama lengkap",
-            pendaftaran:"pendaftaran",
-            no_hp:"6767676",
-            tanggal:Date.now(),
+            pendaftaran:"MA",
+            no_hp:"+6767676",
+            tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
         }]
         const result = new ListStudent(data)
+        expect(typeof result[0].tanggal).toBe("string")
+        delete data[0].tanggal
+        delete result[0].tanggal
         expect(result).toEqual(data)
     })
 
@@ -17,51 +20,51 @@ describe("a list student entity",()=>{
         const data1 = [{
            
             nama_lengkap:"nama lengkap",
-            pendaftaran:"pendaftaran",
-            no_hp:"6767676",
-            tanggal:Date.now(),
+            pendaftaran:"ma",
+            no_hp:"+6767676",
+            tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
         }]
 
         const data2 = [{
             id:"xxxxx",
             
-            pendaftaran:"pendaftaran",
-            no_hp:"6767676",
-            tanggal:Date.now(),
+            pendaftaran:"ma",
+            no_hp:"+6767676",
+            tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
         }]
         const data3 = [{
             id:"xxxxx",
             nama_lengkap:"nama lengkap",
           
-            no_hp:"6767676",
-            tanggal:Date.now(),
+            no_hp:"+6767676",
+            tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
         }]
         const data4 = [{
             id:"xxxxx",
             nama_lengkap:"nama lengkap",
-            pendaftaran:"pendaftaran",
+            pendaftaran:"ma",
            
-            tanggal:Date.now(),
+            tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
         }]
         const data5 = [{
             id:"xxxxx",
             nama_lengkap:"nama lengkap",
-            pendaftaran:"pendaftaran",
-            no_hp:"6767676",
+            pendaftaran:"ma",
+            no_hp:"+6767676",
            
         }]
         const data6 = [{
             id:"xxxxx",
             nama_lengkap:"nama lengkap",
-            pendaftaran:"pendaftaran",
-            no_hp:"6767676",
-            tanggal:Date.now(),
+            pendaftaran:"ma",
+            no_hp:"+6767676",
+            tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
         },{
            
             nama_lengkap:"nama lengkap",
-            pendaftaran:"pendaftaran",
-            no_hp:"6767676",
-            tanggal:Date.now(),
+            pendaftaran:"ma",
+            no_hp:"+6767676",
+            tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
         }]
         expect(()=>new ListStudent(data1)).toThrowError("Internal Server Error")
         expect(()=>new ListStudent(data2)).toThrowError("Internal Server Error")

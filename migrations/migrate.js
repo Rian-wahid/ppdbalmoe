@@ -53,7 +53,7 @@ CREATE TABLE \`students\` (
   \`nama_lengkap\` text NOT NULL,
   \`no_hp\` text NOT NULL,
   \`pendaftaran\` text NOT NULL,
-  \`tanggal\` bigint NOT NULL,
+  \`tanggal\`text NOT NULL,
   \`alamat\` text NOT NULL,
   \`ttl\` text NOT NULL,
   tempat_tinggal text NOT NULL,

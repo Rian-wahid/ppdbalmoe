@@ -18,7 +18,7 @@ class ClientError extends Error{
         return new ClientError(msg,400,status);
     }
 
-    static unauthorized(msg="Unauthorized",status="fai"){
+    static unauthorized(msg="Unauthorized",status="fail"){
         return  new ClientError(msg,401,status);
     }
 

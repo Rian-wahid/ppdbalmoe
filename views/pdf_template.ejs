@@ -36,20 +36,18 @@
         .kop-title div{
             position:absolute;
             bottom:10px;
-            left:150px;
+            left:120px;
             right:0;
         }
         .kop img{
             position:absolute;
-            width:100px;
-            height:100px;
+            width:80px;
+            height:80px;
             display:inline;
             bottom:0;
-            left:30px;
+            left:25px;
         }
-        .title{
-            text-align:center;
-        }
+       
         tr {
            margin-top:12px;
            margin-bottom:12px;
@@ -58,6 +56,18 @@
         td{
             padding:6px;
             
+        }
+        .container{
+          width:100%;
+          padding-left: 5%;
+          padding-right: 5%;
+        }
+        .hr{
+          margin-top:8px;
+          margin-bottom:8px;
+          width:100%;
+          height:3px;
+          background-color: black;
         }
       table{
         font-size:16px;
@@ -72,7 +82,7 @@
     
   <header>
     <div class="kop">
-        <img src="<%=base64icon;%>" alt="">
+        <img src="<%= include("base64icon");%>" alt="">
         <div class="kop-title">
             <div>
                 <h5>LEMBAGA PENDIDIKAN MA'ARIF CABANG PONOROGO</h5>
@@ -83,11 +93,16 @@
         </div>
         
     </div>
-    <hr>
-    <div class="title">
-        <h3>FORMULIR PENERIMAAN PESERTA DIDIK BARU <%=student["pendaftaran"];%> MA'ARIF AL MUKARROM TAHUN PELAJARAN 2023/2024</h3>
+    <div class="hr"></div>
+    
+    
+      <div class="container" style="padding-left: 0;">
+        <h3 style="text-align:center;">FORMULIR PENERIMAAN PESERTA DIDIK BARU </h3>
+        <h3 style="text-align:center;"><%=student["pendaftaran"];%> MA'ARIF AL MUKARROM TAHUN PELAJARAN 2023/2024</h3>
     </div>
+ 
 </header>
+ <div class="container">
     <table>
      
             <tr>
@@ -220,6 +235,8 @@
  
   <td style="vertical-align: top;"><%= student.no_telp_sekolah_asal;%></td>
 </tr>
+
        </table>
+      </div>
 </body>
 </html>

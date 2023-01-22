@@ -27,13 +27,14 @@ class NewStudent{
             no_telp_sekolah_asal,
         }=student
         ttl = `${ttl.tempat}, ${ttl.tanggal}`
-        keterangan_ayah = (keterangan_ayah.tahun.length>0)?`${keterangan_ayah.info} ${keterangan_ayah.tahun}`:keterangan_ayah.info;
-        keterangan_ibu = (keterangan_ibu.tahun.length>0)?`${keterangan_ibu.info} ${keterangan_ibu.tahun}`:keterangan_ibu.info;
-        alamat_tempat_tinggal =`${(alamat_tempat_tinggal.jl!="")?"Jl. "+alamat_tempat_tinggal.jl+" ":""}, RT ${alamat_tempat_tinggal.rt} RW ${alamat_tempat_tinggal.rw}, Dsn. ${alamat_tempat_tinggal.dsn}, DS. ${alamat_tempat_tinggal.ds}, KEC. ${alamat_tempat_tinggal.kec}, KAB. ${alamat_tempat_tinggal.kab}`
+        keterangan_ayah = (keterangan_ayah.info=="0")?`Meninggal Pada Tahun ${keterangan_ayah.tahun}`:"Masih Hidup";
+        keterangan_ibu = (keterangan_ibu.info=="0")?`Meninggal Pada Tahun ${keterangan_ibu.tahun}`:"Masih Hidup";
+        alamat_tempat_tinggal =`${(alamat_tempat_tinggal.jl!="")?"Jl. "+alamat_tempat_tinggal.jl+", ":""}RT ${alamat_tempat_tinggal.rt} RW ${alamat_tempat_tinggal.rw}, Dsn. ${alamat_tempat_tinggal.dsn}, Ds/Kel. ${alamat_tempat_tinggal.ds}, Kec. ${alamat_tempat_tinggal.kec}, Kab. ${alamat_tempat_tinggal.kab}`
         anak_ke = `${anak_ke.urutan} dari ${anak_ke.dari}`
-        alamat =`${(alamat.jl!="")?"Jl. "+alamat.jl+" ":""}, RT ${alamat.rt} RW ${alamat.rw}, Dsn. ${alamat.dsn}, DS. ${alamat.ds} KEC. ${alamat.kec}, KAB. ${alamat.kab}`
+        alamat =`${(alamat.jl!="")?"Jl. "+alamat.jl+", ":""}RT ${alamat.rt} RW ${alamat.rw}, Dsn. ${alamat.dsn}, Ds/Kel. ${alamat.ds} Kec. ${alamat.kec}, Kab. ${alamat.kab}`
+        const tanggal = new Intl.DateTimeFormat(["id"]).format(new Date())
         return {
-            tanggal:Date.now(),
+            tanggal,
             pendaftaran,
             nama_lengkap,
             jenis_kelamin,
@@ -124,6 +125,7 @@ class NewStudent{
         if(!TC.test(alamat.jl,"string").check() ||
            !TC.test(alamat.rt,"string").min(1).check() || 
            !TC.test(alamat.rw,"string").min(1).check() ||
+           !TC.test(alamat.dsn,"string").min(1).check() ||
            !TC.test(alamat.ds,"string").min(1).check() ||
            !TC.test(alamat.kec,"string").min(1).check()||
            !TC.test(alamat.kab,"string").min(1).check()){
@@ -132,7 +134,7 @@ class NewStudent{
     }
 
     validateKeterangan(keterangan){
-        if(!TC.test(keterangan.info,"string").min(2).check()||!TC.test(keterangan.tahun,"string").check()){
+        if(!TC.test(keterangan.info,"string").min(1).check()||!TC.test(keterangan.tahun,"string").pattern(/\d+$/).check()){
             throw ClientError.bad()
         }
     }

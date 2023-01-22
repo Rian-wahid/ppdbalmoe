@@ -8,6 +8,9 @@ const pool = require("./database/mysql/pool")
 const ViewEngine = require("./renderer/ViewEngine")
 const htmlPdfNode = require("html-pdf-node")
 const ejs = require("ejs")
+const {nanoid} = require("nanoid")
+const xss = require("xss")
+const bot = require("./external/robot/wrapper")
 
 const container = createContainer()
 
@@ -37,9 +40,17 @@ container.register([
     {
         Class:StudentRepositoryMysql,
         parameter:{
+            injectType:"destructuring",
             dependencies:[
                 {
+                    name:"pool",
                     concrete:pool
+                },{
+                    name:"idGenerator",
+                    concrete:nanoid
+                },{
+                    name:"xssFilter",
+                    concrete:xss
                 }
             ]
         }
@@ -72,6 +83,9 @@ container.register([
                 },{
                     name:"csrfTokenManager",
                     internal:CsrfTokenManager.name
+                },{
+                    name:"bot",
+                    concrete:bot
                 }
             ]
         }

@@ -17,10 +17,10 @@ describe("a student repository",()=>{
         await pool.end()
     })
     it("insert",async ()=>{
-        let idToGen="students-xxxx"
+        let idToGen="xxxx"
         const idGenerator = ()=>idToGen
         const studentRepository = new StudentRepositoryMysql({pool,xssFilter,idGenerator})
-        const data ={ tanggal:Date.now(),
+        const data ={ tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
             pendaftaran:"MA",
             nama_lengkap:"Nama Lengkap",
             jenis_kelamin:"Jenis Kelamin",
@@ -45,23 +45,23 @@ describe("a student repository",()=>{
         }
 
         let resultId = await studentRepository.newStudent(data)
-        expect(resultId).toBe(idToGen)
-        expect(await studentsTableHelper.getById(idToGen)).toEqual({id:resultId,...data})
-        idToGen="student-aaaaa"
+        expect(resultId.includes(idToGen)).toBe(true)
+        expect(await studentsTableHelper.getById(resultId)).toEqual({id:resultId,...data})
+        idToGen="aaaaa"
         resultId=await studentRepository.newStudent(data)
-        expect(resultId).not.toBe(idToGen)
+        expect(resultId.includes(idToGen)).toBe(false)
         expect(await studentsTableHelper.count()).toBe(1)
         data.nama_lengkap="nama lengkap baru"
         resultId=await studentRepository.newStudent(data)
-        expect(resultId).toBe(idToGen)
+        expect(resultId.includes(idToGen)).toBe(true)
         expect(await studentsTableHelper.count()).toBe(2)
-        expect(await studentsTableHelper.getById(idToGen)).toEqual({id:resultId,...data})
+        expect(await studentsTableHelper.getById(resultId)).toEqual({id:resultId,...data})
 
     })
 
 
     it("list (pagination)",async ()=>{
-        const idGenerator = ()=>"students-xxxx"
+        const idGenerator = ()=>"xxxx"
         const studentRepository = new StudentRepositoryMysql({pool,xssFilter,idGenerator})
         const names = ["aaa","bbb","ccc","ddd","eee","fff","ggg"]
         let j=6
@@ -84,7 +84,7 @@ describe("a student repository",()=>{
     })
 
     it("detail",async ()=>{
-        const idGenerator = ()=>"students-xxxx"
+        const idGenerator = ()=>"xxxx"
         const studentRepository = new StudentRepositoryMysql({pool,xssFilter,idGenerator})
         await studentsTableHelper.add({id:idGenerator()})
         let detail = await studentRepository.getDetail(idGenerator())

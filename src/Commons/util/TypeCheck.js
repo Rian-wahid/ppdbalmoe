@@ -53,7 +53,7 @@ class TypeCheck{
                     return false
                 }
             }
-            if(this._pattern!=null){
+            if(this._pattern!=null && this._to_check!=""){
                 if(!this._pattern.test(this._to_check)){
                     return false;
                 }

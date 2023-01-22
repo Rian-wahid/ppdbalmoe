@@ -6,7 +6,7 @@ let qrtoken="";
 let  is_ready=false;
 const queue = [];
 
-
+let client
 const { Client,MessageMedia,LocalAuth} = require('whatsapp-web.js');
 const init=async ()=>{
     ee.on("send",(data)=>{
@@ -16,7 +16,7 @@ const init=async ()=>{
         fs.mkdirSync(__dirname+"/auth")
     }
 
-    const client= new Client({
+     client= new Client({
         authStrategy:new LocalAuth({
             dataPath:__dirname+"/auth"
         }),
@@ -34,7 +34,11 @@ const init=async ()=>{
                         if(phone[0]=="+"){
                             phone=phone.substring(1)
                         }
-                        phone=phone+"@c.us"
+                        phone=await client.getNumberId(phone)
+                        if(!phone){
+                            return;
+                        }
+                        phone=phone._serialized
                         const media = new MessageMedia(mime,base64,filename)
                         await client.sendMessage(phone,media)
                     }catch(e){
@@ -43,7 +47,7 @@ const init=async ()=>{
                  } else{
                     clearInterval(intv);
                 }
-            },200);
+            },1000);
             if(!is_ready){
                 clearInterval(interv)
             }
@@ -54,6 +58,7 @@ const init=async ()=>{
         qrtoken=qr;
         qrcode.generate(qr,{small:true});
     });
+    
      client.on("message",(message)=>{
         if(message.from.split("@")[0]==process.env.PHONE_FOR_ALERT.substring(1)){
             if(message.body=="!ping"){
@@ -73,8 +78,13 @@ const init=async ()=>{
      client.on("disconnected",()=>{
         is_ready=false
      })
-    client.on('ready', () => {
+    client.on('ready', async () => {
+            const name="ALMUKARROM"
+            const withName = await client.setDisplayName(name)
             console.info("ready")
+            if(withName){
+                console.info("Name :",name)
+            }
             is_ready=true;
             ee.emit("ready");
     });
@@ -116,9 +126,34 @@ function getQR(){
 function isReady(){
     return is_ready;
 }
+function existsAccount(phone){
+    return new Promise((res,rej)=>{
+        let intv= setInterval(async ()=>{
+            if(isReady()){
+                if(phone[0]=="+"){
+                    phone=phone.substring(1)
+                }
+                res(Boolean(await client.getNumberId(phone)))
+                clearInterval(intv)
+            }
+    
+        },10000)
+    })
+}
+function custom(cb){
+   let intv= setInterval(async ()=>{
+        if(isReady()){
+            cb(client)
+            clearInterval(intv)
+        }
+
+    },10000)
+}
 module.exports={
     alert,
     send,
     getQR,
-    isReady
+    isReady,
+    custom,
+    existsAccount
 }
