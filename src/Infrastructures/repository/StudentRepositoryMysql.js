@@ -63,7 +63,7 @@ class StudentRepositoryMysql extends StudentRepository{
         alamat_sekolah_asal = ? AND
         no_telp_sekolah_asal = ?;`,checkvalues) 
         if(old){
-            return old.id
+            return false
         }
 
         const id = `student-${this._idGenerator(8)}${Date.now()}`;

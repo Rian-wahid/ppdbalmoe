@@ -48,16 +48,22 @@
      })();
 
      (()=>{
-        let modalSuccess = document.getElementById("modal_success")
-        let modalFail = document.getElementById("modal_fail")
-        let modalLoading = document.getElementById("modal_loading")
+       
         let modalFailInfo = document.getElementById("modal_fail_info")
-        modalSuccess=new bootstrap.Modal(modalSuccess,{})
-        modalFail=new bootstrap.Modal(modalFail,{})
-        modalLoading=new bootstrap.Modal(modalLoading,{})
+        let is_fetch=false;
+        const modalSuccess=new bootstrap.Modal("#modal_success")
+        const modalFail=new bootstrap.Modal("#modal_fail")
+        const btnSubmitDefault=document.getElementById("btn_submit_default")
+        const btnSubmitLoading=document.getElementById("btn_submit_loading")
+        btnSubmitLoading.style.display="none"
         document.getElementById("ppdb").addEventListener("submit",(e)=>{
             e.preventDefault();
-            modalLoading.show()
+            if(is_fetch){
+                return;
+            }
+            is_fetch=true
+            btnSubmitDefault.style.display="none"
+            btnSubmitLoading.style.display="block"
             const form = new FormData(e.target);
             
             const data ={
@@ -137,18 +143,27 @@
             }).then(res=>{
                 
                 res.json().then(resJson=>{
-                    modalLoading.hide()
-                    setTimeout(()=>{
-                        if(resJson.status !="success"){
-                            modalFailInfo.innerText=resJson.message || ""
-                            modalFail.show()
-                        }else{
-                            modalSuccess.show()
-                        }
-                    },1000)
+                    if(resJson.status !="success"){
+                        modalFailInfo.innerText=resJson.message || ""
+                        modalFail.show()
+                    }else{
+                        modalSuccess.show()
+                    }
+                    
                    
+                }).catch(e=>{
+                    modalFailInfo.innerText="Terjadi masalah"
+                    modalFail.show()
                 })
-            });
+                is_fetch=false
+                btnSubmitDefault.style.display="block"
+                btnSubmitLoading.style.display="none"
+            }).catch(e=>{
+                is_fetch=false
+                btnSubmitDefault.style.display="block"
+                btnSubmitLoading.style.display="none"
+               
+            })
         })
      })();
     

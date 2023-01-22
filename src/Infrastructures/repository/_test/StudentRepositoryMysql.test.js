@@ -49,7 +49,7 @@ describe("a student repository",()=>{
         expect(await studentsTableHelper.getById(resultId)).toEqual({id:resultId,...data})
         idToGen="aaaaa"
         resultId=await studentRepository.newStudent(data)
-        expect(resultId.includes(idToGen)).toBe(false)
+        expect(resultId).toBe(false)
         expect(await studentsTableHelper.count()).toBe(1)
         data.nama_lengkap="nama lengkap baru"
         resultId=await studentRepository.newStudent(data)

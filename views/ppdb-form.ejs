@@ -394,7 +394,12 @@
                   </ol>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary mb-3 mt-3">Kirim</button>
+              <button type="submit" class="btn btn-primary mb-3 mt-3">
+                <div id="btn_submit_default">Kirim</div> 
+                <div id="btn_submit_loading" class="spinner-border text-secondary text-center" role="status">
+                  <span class="sr-only"></span>
+                </div>
+              </button>
             </form>
           </div>
         </div>
@@ -404,12 +409,12 @@
  
 
 
-<div class="modal fade" id="modal_success" tabindex="-1" role="dialog" aria-labelledby="mudal_success_label" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal fade" id="modal_success" tabindex="-1" role="dialog" aria-labelledby="modal_success_label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="mudal_success_label">Pendaftaran berhasil</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title" id="modal_success_label">Pendaftaran berhasil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -421,12 +426,12 @@
   </div>
 </div>
 
-<div class="modal fade" id="modal_fail" tabindex="-1" role="dialog" aria-labelledby="mudal_fail_label" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal fade" id="modal_fail" tabindex="-1" role="dialog" aria-labelledby="modal_fail_label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title text-danger" id="mudal_fail_label">Pendaftaran gagal</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title text-danger" id="modal_fail_label">Pendaftaran gagal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -438,23 +443,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="modal_loading" tabindex="-1" role="dialog" aria-labelledby="mudal_loading_label" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-danger" id="mudal_loading_label">Mengirim...</h5>
-        <button type="button" class="close d-hidden" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class="spinner-border text-secondary text-center"style="font-size:2em;"role="status">
-          <span class="sr-only"></span>
-        </div>
-      </div>
-      
-      
-    </div>
-  </div>
-</div>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>

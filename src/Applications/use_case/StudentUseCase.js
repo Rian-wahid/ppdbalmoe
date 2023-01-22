@@ -28,7 +28,7 @@ class StudentUseCase{
             http.body({status:"fail",message:`No HP ${student.no_hp} tidak terdaftar di whatsapp`})
             return http.response()
         }
-        await this._studentRepository.newStudent(student,async ()=>{
+        let inserted = await this._studentRepository.newStudent(student,async ()=>{
             try{
             
             const html = await this._viewEngine.render("pdf_template",{student})
@@ -44,7 +44,11 @@ class StudentUseCase{
                 this._bot.alert("trying send to "+student.no_hp+" but error\n\n"+e.stack)
             }
         })
-        
+        if(!inserted){
+            http.statusCode(400)
+            http.body({status:"fail",message:`Kemungkinan anda atau orang lain pernah memasukkan data yang sama persis`})
+            return http.response()
+        }
         
         http.body({status:"success",message:"pendaftaran berhasil"})
         return http.response()
