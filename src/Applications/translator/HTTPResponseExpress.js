@@ -9,7 +9,7 @@ class HTTPResponseExpress{
         try{
             res.status(this._statusCode)
             for(let header of this._headers){
-                res.header(header)
+                res.set(header)
             }
             if(typeof this._body=="object"){
                 res.json(this._body)

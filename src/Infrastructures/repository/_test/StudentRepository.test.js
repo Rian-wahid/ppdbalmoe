@@ -1,6 +1,5 @@
 "use strict";
-require("dotenv").config()
-const xssFilter = require("xss")
+require("../../../../config")
 const StudentsTableHelper = require("../../../../tests/helper/StudentsTableHelper")
 const StudentRepositoryMysql = require("../StudentRepositoryMysql")
 const pool = require("../../database/mysql/pool")
@@ -19,7 +18,7 @@ describe("a student repository",()=>{
     it("insert",async ()=>{
         let idToGen="xxxx"
         const idGenerator = ()=>idToGen
-        const studentRepository = new StudentRepositoryMysql({pool,xssFilter,idGenerator})
+        const studentRepository = new StudentRepositoryMysql(pool,idGenerator)
         const data ={ tanggal:new Intl.DateTimeFormat(["id"]).format(new Date()),
             pendaftaran:"MA",
             nama_lengkap:"Nama Lengkap",
@@ -62,7 +61,7 @@ describe("a student repository",()=>{
 
     it("list (pagination)",async ()=>{
         const idGenerator = ()=>"xxxx"
-        const studentRepository = new StudentRepositoryMysql({pool,xssFilter,idGenerator})
+        const studentRepository = new StudentRepositoryMysql(pool,idGenerator)
         const names = ["aaa","bbb","ccc","ddd","eee","fff","ggg"]
         let j=6
         for(let i=1; i<8; i++){
@@ -85,7 +84,7 @@ describe("a student repository",()=>{
 
     it("detail",async ()=>{
         const idGenerator = ()=>"xxxx"
-        const studentRepository = new StudentRepositoryMysql({pool,xssFilter,idGenerator})
+        const studentRepository = new StudentRepositoryMysql(pool,idGenerator)
         await studentsTableHelper.add({id:idGenerator()})
         let detail = await studentRepository.getDetail(idGenerator())
         expect(typeof detail).toBe("object")

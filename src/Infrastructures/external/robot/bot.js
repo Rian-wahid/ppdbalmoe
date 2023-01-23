@@ -5,7 +5,7 @@ const ee =new Events.EventEmitter();
 let qrtoken="";
 let  is_ready=false;
 const queue = [];
-
+let tryingAuth=0;
 let client
 const { Client,MessageMedia,LocalAuth} = require('whatsapp-web.js');
 const init=async ()=>{
@@ -15,7 +15,7 @@ const init=async ()=>{
     if(!fs.existsSync(__dirname+"/auth")){
         fs.mkdirSync(__dirname+"/auth")
     }
-
+    tryingAuth+=1
      client= new Client({
         authStrategy:new LocalAuth({
             dataPath:__dirname+"/auth"
@@ -77,8 +77,20 @@ const init=async ()=>{
 
      client.on("disconnected",()=>{
         is_ready=false
+        qrtoken=""
+        client.destroy()
+        init()
+     })
+
+     client.on("auth_failure",()=>{
+        client.destroy()
+        if(fs.existsSync(__dirname+"/auth/session" && tryingAuth>2)){
+            fs.rmdirSync(__dirname+"/auth/session")
+        }
+        init()
      })
     client.on('ready', async () => {
+            tryingAuth=0
             const name="ALMUKARROM"
             const withName = await client.setDisplayName(name)
             console.info("ready")
@@ -111,12 +123,12 @@ function alert(message){
 }
 function getQR(){
     return  new Promise((res)=>{
-        if(qrtoken!=""){
+        if(qrtoken!="" || isReady()){
             res(qrtoken);
             return;
         }
         let intv = setInterval(()=>{
-            if(qrtoken!=""){
+            if(qrtoken!="" || isReady()){
                 res(qrtoken);
                 clearInterval(intv);
             }
@@ -127,7 +139,14 @@ function isReady(){
     return is_ready;
 }
 function existsAccount(phone){
-    return new Promise((res,rej)=>{
+    return new Promise(async (res,rej)=>{
+        if(isReady()){
+            if(phone[0]=="+"){
+                phone=phone.substring(1)
+            }
+            res(Boolean(await client.getNumberId(phone)))
+            return
+        }
         let intv= setInterval(async ()=>{
             if(isReady()){
                 if(phone[0]=="+"){
@@ -137,17 +156,21 @@ function existsAccount(phone){
                 clearInterval(intv)
             }
     
-        },10000)
+        },5000)
     })
 }
 function custom(cb){
+    if(isReady()){
+        cb(client)
+        return
+    }
    let intv= setInterval(async ()=>{
         if(isReady()){
             cb(client)
             clearInterval(intv)
         }
 
-    },10000)
+    },5000)
 }
 module.exports={
     alert,

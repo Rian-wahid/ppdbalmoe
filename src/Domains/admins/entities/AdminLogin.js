@@ -1,14 +1,14 @@
 const ClientError =  require("../../../Commons/exceptions/ClientError")
 const crypto = require("crypto")
-const algo = process.env.ADMIN_HASH_ALGO || "sha256"
-const encoding = process.env.ADMIN_HASH_ENCODING || "hex"
+const algo = process.env.ADMIN_HASH_ALGO
+const encoding = process.env.ADMIN_HASH_ENCODING
 class AdminLogin{
     constructor(credential){
         this.validate(credential)
         const {username,password} = credential
         return {
-            username:crypto.createHash(algo).update(username).digest(encoding),
-            password:crypto.createHash(algo).update(password).digest(encoding)
+            username_hash:crypto.createHash(algo).update(username).digest(encoding),
+            password_hash:crypto.createHash(algo).update(password).digest(encoding)
         }
     }
     validate({username,password}){

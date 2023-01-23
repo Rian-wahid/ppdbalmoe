@@ -8,6 +8,7 @@ const registration = require("../../Interfaces/http/web/registration")
 
 function createServer(container){
     httpServer.use(express.json());
+    httpServer.use(express.cookieParser())
     httpServer.use(express.static(process.env.PUBLIC_PATH))
     const asyncWraper=(cba)=>{
         return async (req,res,next)=>{

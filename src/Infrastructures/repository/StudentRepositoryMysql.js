@@ -2,7 +2,7 @@ const StudentRepository=require("../../Domains/students/StudentRepository")
 const ListStudent = require("../../Domains/students/entities/ListStudent")
 const DetailStudent = require("../../Domains/students/entities/DetailStudent")
 class StudentRepositoryMysql extends StudentRepository{
-    constructor({pool,idGenerator,xssFilter}){
+    constructor(pool,idGenerator){
         super()
         this._pool=pool
         this._idGenerator=idGenerator
@@ -32,14 +32,9 @@ class StudentRepositoryMysql extends StudentRepository{
         alamat_sekolah_asal,
         no_telp_sekolah_asal,
 
-    },cb=()=>{}){
+    }){
         let values = [tanggal,pendaftaran,nama_lengkap,jenis_kelamin,ttl,alamat, anak_ke,tempat_tinggal,transportasi,no_hp,nama_lengkap_ayah, nama_lengkap_ibu,pekerjaan_ayah,pekerjaan_ibu, alamat_tempat_tinggal,penghasilan,keterangan_ayah,keterangan_ibu,nama_sekolah_asal,alamat_sekolah_asal,no_telp_sekolah_asal,]
-        values = values.map(value=>{
-            if(typeof value!="string"){
-                return value
-            }
-            return this._xssFilter(value)
-        })
+       
         const [,...checkvalues] = values
         const [[old]] = await this._pool.execute(`SELECT id  FROM students WHERE
         pendaftaran = ? AND
@@ -92,7 +87,7 @@ class StudentRepositoryMysql extends StudentRepository{
             alamat_sekolah_asal,
             no_telp_sekolah_asal,
             id) VALUES (${q});`,values)
-        cb()
+       
         return id
     }
     async getList(offset=0){

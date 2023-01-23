@@ -1,13 +1,15 @@
 "use strict";
 require("../../../../config")
 const StudentUseCase=require("../StudentUseCase")
+const ClientError = require("../../../Commons/exceptions/ClientError")
 const StudentRepositoryMysql=require("../../../Infrastructures/repository/StudentRepositoryMysql")
 const CsrfTokenManager=require("../../../Infrastructures/security/CsrfTokenManager")
 const HTMLToPDF = require("../../../Infrastructures/renderer/HTMLToPDF")
 const ViewEngine = require("../../../Infrastructures/renderer/ViewEngine")
-const xssFilter = require("xss")
 const StudentsTableHelper = require("../../../../tests/helper/StudentsTableHelper")
+const JwtTokenManager = require("../../../Infrastructures/security/JwtTokenManager")
 const jwt = require("jsonwebtoken")
+const jwtTokenManager = new JwtTokenManager(jwt)
 const ejs = require("ejs")
 const pool = require("../../../Infrastructures/database/mysql/pool")
 const {nanoid}=require("nanoid")
@@ -15,9 +17,10 @@ const htmlPdfNode = require("html-pdf-node")
 const viewEngine = new ViewEngine(ejs,process.env.VIEW_PATH)
 const csrfTokenManager= new CsrfTokenManager(jwt)
 const htmlToPdf=new HTMLToPDF(htmlPdfNode)
-const studentRepository = new StudentRepositoryMysql({pool,idGenerator:nanoid,xssFilter})
+const studentRepository = new StudentRepositoryMysql(pool,nanoid)
 const studentTableHelper = new StudentsTableHelper(pool)
 const fs = require("fs")
+
 const bot = {send:({base64,filename})=>{
     const buf = Buffer.from(base64,"base64")
     fs.writeFileSync(__dirname+"/"+filename,buf)
@@ -26,6 +29,7 @@ console.error(msg)
 },existsAccount:async ()=>{
     return true
 }}
+
 jest.setTimeout(120000)
 describe("student use case",()=>{
     beforeAll(async ()=>{
@@ -39,31 +43,36 @@ describe("student use case",()=>{
         await pool.end()
     })
 
-    it("invalid csrf token",async ()=>{
-        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot})
-            try{
-                 await studentUseCase.addStudent({},"salah")
-                 throw new Error("expected error but not")
-            }catch(e){}
+    it("add student invalid csrf token",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const error = "expected error but not"
+        try{
+             await studentUseCase.addStudent({},"salah")
+            throw new Error(error)
+        }catch(e){
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
+        }
 
     })
 
-    it("invalid payload", async ()=>{
+    it("add student invalid payload", async ()=>{
         
-        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot})
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
         const token = await csrfTokenManager.token()
-       
+        const error = "expected error but not"
         try{
             await studentUseCase.addStudent({},token)
-            throw new Error("expected error but not")
+            throw new Error(error)
         }catch(e){
-
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
         }
     })
 
-    it("should not error",async ()=>{
+    it("add student should not error",async ()=>{
         
-        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot})
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
         const token = await csrfTokenManager.token()
         const data = {
                 pendaftaran:"MA",
@@ -116,12 +125,105 @@ describe("student use case",()=>{
                 no_telp_sekolah_asal:"62663773",
             }
            
-            try{
-                await studentUseCase.addStudent(data,token)
-            }catch(e){
-                throw e
-            }
+            const result =await studentUseCase.addStudent(data,token)
+            expect(result.statusCode).toBe(201)
             expect(await studentTableHelper.count()).toBe(1)
         
+    })
+
+    it("list student invalid csrf token",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const accessToken = await jwtTokenManager.createAccessToken({id:"xxx"})
+        const error = "expected error but not"
+        try{
+            await studentUseCase.listStudent({offset:0,csrfToken:"salah",accessToken})
+            throw new Error(error)
+        }catch(e){
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
+        }
+    })
+    it("list student invalid accessToken",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const csrfToken = await csrfTokenManager.token()
+        const error ="expected error but not"
+        try{
+            await studentUseCase.listStudent({offset:0,csrfToken,accessToken:"salah"})
+        }catch(e){
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
+        }
+
+        const accessToken = await jwtTokenManager.createRefreshToken({id:"xxx"})
+        try{
+            await studentUseCase.listStudent({offset:0,csrfToken,accessToken})
+        }catch(e){
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
+        }
+    })
+    it("list student should not error",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const csrfToken = await csrfTokenManager.token()
+        const accessToken = await jwtTokenManager.createAccessToken({id:"xxx"})
+        const result = await studentUseCase.listStudent({offset:0,csrfToken,accessToken})
+        expect(result.statusCode).toBe(200)
+        expect(Array.isArray(result.body.data)).toBe(true)
+    })
+
+    it("detail student invalid csrf token",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const accessToken = await jwtTokenManager.createAccessToken({id:"xxx"})
+        const error = "expected error but not"
+        try{
+            await studentUseCase.detailStudent({studentId:"xxx",csrfToken:"salah",accessToken})
+            throw new Error(error)
+        }catch(e){
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
+        }
+
+    })
+
+    it("detail student invalid access token",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const accessToken = "salah"
+        const csrfToken = await csrfTokenManager.token()
+        const error = "expected error but not"
+        try{
+            await studentUseCase.detailStudent({studentId:"xxx",csrfToken,accessToken})
+            throw new Error(error)
+        }catch(e){
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
+        }
+
+    })
+
+    it("detail student id not found",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const csrfToken = await csrfTokenManager.token()
+        const accessToken = await jwtTokenManager.createAccessToken({id:"xxx"})
+        const error ="expected error but not"
+        try{
+            await studentUseCase.detailStudent({studentId:"xxx",csrfToken,accessToken})
+            throw new Error(error)
+        }catch(e){
+            expect(e.message).not.toBe(error)
+            expect(e instanceof ClientError).toBe(true)
+        }
+
+    })
+
+    it("detail student should not error",async ()=>{
+        const studentUseCase=new StudentUseCase({viewEngine,htmlToPdf,csrfTokenManager,studentRepository,bot,jwtTokenManager})
+        const studentId="student-xxx"
+        await studentTableHelper.add({id:studentId})
+        const accessToken= await jwtTokenManager.createAccessToken({id:"xxx"})
+        const csrfToken = await csrfTokenManager.token()
+        const result = await studentUseCase.detailStudent({studentId,accessToken,csrfToken})
+        expect(result.statusCode).toBe(200)
+        expect(typeof result.body.data).toBe("object")
+    
     })
 })
