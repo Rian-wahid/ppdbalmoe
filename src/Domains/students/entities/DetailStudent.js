@@ -1,8 +1,12 @@
 const InternalError = require("../../../Commons/exceptions/InternalError")
 const TC = require("../../../Commons/util/TypeCheck")
+const xss = require("xss")
 class DetailStudent{
     constructor(student){
         this.validate(student)
+        for(let key in student){
+            student[key] = xss(student[key])
+        }
         const {
             pendaftaran,
             nama_lengkap,

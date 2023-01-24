@@ -87,7 +87,7 @@
             <div>
                 <h5>LEMBAGA PENDIDIKAN MA'ARIF CABANG PONOROGO</h5>
                 <h2><%=student["pendaftaran"];%> MA'ARIF AL MUKARROM</h2>
-                <p><i>Jl. Raden Patah No 11 Kauman Somoroto Ponorogo (0352) 751093</i></p>
+                <p><i>Jl. Raden Patah No 11 Kauman Somoroto Ponorogo Telp. (0352) 751093</i></p>
             </div>
            
         </div>
@@ -226,15 +226,9 @@
   <td style="vertical-align: top; width:200px;">Alamat Sekolah Asal</td>
   <td style="vertical-align: top; width:5px" >:</td>
  
-  <td style="vertical-align: top;"><%= student.alamat_sekolah_asal;%></td>
+  <td style="vertical-align: top;"><%= student.alamat_sekolah_asal;%> Telp. <%= student.no_telp_sekolah_asal;%></td>
 </tr>
 
-<tr>
-  <td style="vertical-align: top; width:200px;">No Telp Sekolah asal</td>
-  <td style="vertical-align: top; width:5px" >:</td>
- 
-  <td style="vertical-align: top;"><%= student.no_telp_sekolah_asal;%></td>
-</tr>
 
        </table>
       </div>

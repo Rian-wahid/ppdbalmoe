@@ -6,7 +6,7 @@ class StudentRepositoryMysql extends StudentRepository{
         super()
         this._pool=pool
         this._idGenerator=idGenerator
-        this._xssFilter=xssFilter
+       
     }
 
     async newStudent({

@@ -1,9 +1,13 @@
 const InternalError = require("../../../Commons/exceptions/InternalError")
 const TC = require("../../../Commons/util/TypeCheck")
+const xss = require("xss")
 class  ListStudent{
     constructor(students){
         this.validate(students)
         return students.map((student)=>{
+            for(let key in student){
+                student[key]=xss(student[key])
+            }
             const {id,nama_lengkap,no_hp,pendaftaran,tanggal}=student
             
             return {id,nama_lengkap,no_hp,pendaftaran,tanggal}

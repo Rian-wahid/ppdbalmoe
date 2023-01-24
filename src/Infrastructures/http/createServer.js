@@ -2,13 +2,16 @@ const express=require("express");
 const ClientError=require("../../Commons/exceptions/ClientError");
 const InternalError =require("../../Commons/exceptions/InternalError");
 const httpServer = express();
+const cookieParser =require("cookie-parser")
 const bot = require("../external/robot/wrapper")
 const student =require("../../Interfaces/http/api/student")
 const registration = require("../../Interfaces/http/web/registration")
-
+const fs = require("fs")
+const http = require("http")
+const https = require("https");
 function createServer(container){
     httpServer.use(express.json());
-    httpServer.use(express.cookieParser())
+    httpServer.use(cookieParser())
     httpServer.use(express.static(process.env.PUBLIC_PATH))
     const asyncWraper=(cba)=>{
         return async (req,res,next)=>{
@@ -55,8 +58,20 @@ function createServer(container){
     return {start}
 }
 function start(){
+    if(process.env.SSL_CERT_PATH != "" && process.env.SSL_KEY_PATH!=""){
+        const notSecure = express()
+        notSecure.use((req,res)=>{
+            res.redirect(`https://${req.headers.host}${req.url}`)
+        })
+        http.createServer(notSecure).listen(process.env.HTTP_PORT)
+        https.createServer({
+            key:fs.readFileSync(process.env.SSL_KEY_PATH),
+            cert:fs.readFileSync(process.env.SSL_CERT_PATH)
+        },httpServer).listen(process.env.HTTPS_PORT)
+        return
+    }
    
-    httpServer.listen(process.env.PORT)
+    httpServer.listen(process.env.HTTP_PORT)
 }
 
 module.exports={
