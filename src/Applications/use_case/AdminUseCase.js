@@ -4,11 +4,12 @@ const AdminLogin = require("../../Domains/admins/entities/AdminLogin")
 const AdminUpdate = require("../../Domains/admins/entities/AdminUpdate")
 const NewAdmin = require("../../Domains/admins/entities/NewAdmin")
 class AdminUseCase {
-    constructor({jwtTokenManager,csrfTokenManager,adminRepository,tokenRepository}){
+    constructor({jwtTokenManager,csrfTokenManager,adminRepository,tokenRepository,bot}){
         this._jwtTokenManager = jwtTokenManager
         this._csrfTokenManager = csrfTokenManager
         this._adminRepository = adminRepository
         this._tokenRepository=tokenRepository
+        this._bot =bot
     }
 
     async auth(credential,csrfToken){
@@ -21,9 +22,8 @@ class AdminUseCase {
         const accessToken = await this._jwtTokenManager.createAccessToken(tokenPayload)
         const refreshToken = await this._jwtTokenManager.createRefreshToken(tokenPayload)
         await this._tokenRepository.addToken(refreshToken)
-        csrfToken = await this._csrfTokenManager.token()
         const http = new HTTPResponse()
-        http.body({status:"success",data:{accessToken,refreshToken,csrfToken}})
+        http.body({status:"success",data:{accessToken,refreshToken}})
         return http.response()
 
     }
@@ -80,6 +80,20 @@ class AdminUseCase {
         csrfToken = await this._csrfTokenManager.token()
         const http = new HTTPResponse()
         http.body({status:"success",data:{csrfToken},message:"berhasil mengubah"})
+        return http.response()
+    }
+
+    async getBotQrAndStatus(accessToken){
+        try{
+            await this._jwtTokenManager.verifyAccessToken(accessToken)
+        }catch(e){
+            throw ClientError.unauthorized()
+        }
+
+        const qr = await this._bot.getQR()
+        const active = this._bot.isReady()
+        const http = new HTTPResponse()
+        http.body({status:"success",data:{qr,active}})
         return http.response()
     }
 }

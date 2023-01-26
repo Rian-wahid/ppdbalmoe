@@ -35,7 +35,7 @@ class CsrfTokenManager extends CsrfTokenManagerInterface{
             this._usedTokens[token]+=1
         }
         if(this._usedTokens[token]>this._maxUsedTokenCount){
-            throw ClientError.bad("Jangan spam klik!")
+            throw ClientError.bad()
         }
         
 

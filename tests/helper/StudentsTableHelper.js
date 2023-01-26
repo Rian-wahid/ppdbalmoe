@@ -49,7 +49,7 @@ class StudentsTableHelper {
             alamat_sekolah_asal,
             no_telp_sekolah_asal]
             const q = Array(values.length).fill("?").join(",")
-            await this._pool.execute(`INSERT INTO students (id,
+            await this._pool.execute(`INSERT INTO ppdb_students (id,
                 tanggal,
                 pendaftaran,
                 nama_lengkap,
@@ -74,16 +74,16 @@ class StudentsTableHelper {
     }
 
     async clear(){
-        await this._pool.query("DELETE FROM students WHERE 1=1")
+        await this._pool.query("DELETE FROM ppdb_students WHERE 1=1")
     }
 
     async getById(id){
-        const [[row]] = await this._pool.execute("SELECT * FROM students WHERE id = ?",[id])
+        const [[row]] = await this._pool.execute("SELECT * FROM ppdb_students WHERE id = ?",[id])
         return row
     }
 
     async count(){
-        const [[{t}]] = await this._pool.query("SELECT COUNT(*) AS t FROM students")
+        const [[{t}]] = await this._pool.query("SELECT COUNT(*) AS t FROM ppdb_students")
         return t
     }
 }

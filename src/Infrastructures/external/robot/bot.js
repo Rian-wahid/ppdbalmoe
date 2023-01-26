@@ -105,6 +105,7 @@ const init=async ()=>{
 init()
 
 
+
 function send(data){
     const {phone,base64,mime,filename} = data;
     if(typeof phone!=="string" || typeof base64!="string" || typeof mime!="string" || typeof filename!="string"){
@@ -178,5 +179,6 @@ module.exports={
     getQR,
     isReady,
     custom,
-    existsAccount
+    existsAccount,
+    
 }

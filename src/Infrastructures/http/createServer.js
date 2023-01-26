@@ -58,18 +58,18 @@ function createServer(container){
     return {start}
 }
 function start(){
-    if(process.env.SSL_CERT_PATH != "" && process.env.SSL_KEY_PATH!=""){
-        const notSecure = express()
-        notSecure.use((req,res)=>{
-            res.redirect(`https://${req.headers.host}${req.url}`)
-        })
-        http.createServer(notSecure).listen(process.env.HTTP_PORT)
-        https.createServer({
-            key:fs.readFileSync(process.env.SSL_KEY_PATH),
-            cert:fs.readFileSync(process.env.SSL_CERT_PATH)
-        },httpServer).listen(process.env.HTTPS_PORT)
-        return
-    }
+    // if(process.env.SSL_CERT_PATH != "" && process.env.SSL_KEY_PATH!=""){
+    //     const notSecure = express()
+    //     notSecure.use((req,res)=>{
+    //         res.redirect(`https://${req.headers.hostname}:${process.env.HTTPS_PORT}${req.url}`)
+    //     })
+    //     http.createServer(notSecure).listen(process.env.HTTP_PORT)
+    //     https.createServer({
+    //         key:fs.readFileSync(process.env.SSL_KEY_PATH),
+    //         cert:fs.readFileSync(process.env.SSL_CERT_PATH)
+    //     },httpServer).listen(process.env.HTTPS_PORT)
+    //     return
+    // }
    
     httpServer.listen(process.env.HTTP_PORT)
 }

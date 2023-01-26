@@ -36,7 +36,7 @@ class StudentRepositoryMysql extends StudentRepository{
         let values = [tanggal,pendaftaran,nama_lengkap,jenis_kelamin,ttl,alamat, anak_ke,tempat_tinggal,transportasi,no_hp,nama_lengkap_ayah, nama_lengkap_ibu,pekerjaan_ayah,pekerjaan_ibu, alamat_tempat_tinggal,penghasilan,keterangan_ayah,keterangan_ibu,nama_sekolah_asal,alamat_sekolah_asal,no_telp_sekolah_asal,]
        
         const [,...checkvalues] = values
-        const [[old]] = await this._pool.execute(`SELECT id  FROM students WHERE
+        const [[old]] = await this._pool.execute(`SELECT id  FROM ppdb_students WHERE
         pendaftaran = ? AND
         nama_lengkap = ? AND
         jenis_kelamin = ? AND
@@ -64,7 +64,7 @@ class StudentRepositoryMysql extends StudentRepository{
         const id = `student-${this._idGenerator(8)}${Date.now()}`;
         values.push(id)
         const q = Array(values.length).fill("?").join(",")
-        await this._pool.execute(`INSERT INTO students 
+        await this._pool.execute(`INSERT INTO ppdb_students 
             (tanggal,
             pendaftaran,
             nama_lengkap,
@@ -91,12 +91,12 @@ class StudentRepositoryMysql extends StudentRepository{
         return id
     }
     async getList(offset=0){
-       const [rows] = await this._pool.execute("SELECT nama_lengkap,id,tanggal,no_hp,pendaftaran FROM students  ORDER BY nama_lengkap ASC LIMIT 10 OFFSET ?",[offset])
+       const [rows] = await this._pool.execute("SELECT nama_lengkap,id,tanggal,no_hp,pendaftaran FROM ppdb_students  ORDER BY nama_lengkap ASC LIMIT 10 OFFSET ?",[offset])
        return new ListStudent(rows)
     }
 
     async getDetail(studentId){
-        const [[student]] =await this._pool.execute(`SELECT * FROM students WHERE id = ?`,[studentId])
+        const [[student]] =await this._pool.execute(`SELECT * FROM ppdb_students WHERE id = ?`,[studentId])
         if(!student){
             return null
         }
