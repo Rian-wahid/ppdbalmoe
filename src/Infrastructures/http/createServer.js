@@ -7,9 +7,11 @@ const bot = require("../external/robot/wrapper")
 const student =require("../../Interfaces/http/api/student")
 const registration = require("../../Interfaces/http/web/registration")
 const fs = require("fs")
+const cors = require("cors")
 const http = require("http")
 const https = require("https");
 function createServer(container){
+    httpServer.use(cors())
     httpServer.use(express.json());
     httpServer.use(cookieParser())
     httpServer.use(express.static(process.env.PUBLIC_PATH))
