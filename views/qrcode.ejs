@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_qrcode" content="<%= qrcode;%>">
+    <title>Scan Wa</title>
+</head>
+<body>
+    <canvas></canvas>
+    <script src="/js/qrcode.js"></script>
+    <script>
+        const qrcode = document.querySelector("meta[name=\"_qrcode\"]").content
+        QRCode.toCanvas(document.querySelector("canvas"),qrcode,(err)=>{
+            if(err){
+                console.error(err)
+                return
+            }
+            console.info("success")
+        })
+    </script>
+</body>
+
+</html>

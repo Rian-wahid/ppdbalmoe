@@ -1,3 +1,4 @@
 node_modules/
 .env
 src/Infrastructures/external/robot/auth/session/
+package-lock.json
